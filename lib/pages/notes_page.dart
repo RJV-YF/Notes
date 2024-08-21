@@ -109,8 +109,8 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   // delete note
-  void deleteNote(Note note) {
-    context.read<NoteDatabase>().deleteNote(note.id);
+  void deleteNote(int id) {
+    context.read<NoteDatabase>().deleteNote(id);
   }
 
   @override
@@ -143,8 +143,20 @@ class _NotesPageState extends State<NotesPage> {
       body: ListView.builder(
         itemCount: currentNotes.length,
         itemBuilder: (context, index) {
+          final note = currentNotes[index];
           return ListTile(
-            title: Text(currentNotes[index].note),
+            title: Text(note.note),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                    onPressed: () => updateNote(note),
+                    icon: const Icon(Icons.edit)),
+                IconButton(
+                    onPressed: () => deleteNote(note.id),
+                    icon: const Icon(Icons.delete)),
+              ],
+            ),
           );
         },
       ),
