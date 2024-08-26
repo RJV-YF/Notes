@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:notes/components/my_drawer.dart';
 import 'package:notes/models/note_database.dart';
 import 'package:provider/provider.dart';
 
@@ -32,17 +34,14 @@ class _NotesPageState extends State<NotesPage> {
               ),
               actions: [
                 MaterialButton(
-                  color: Colors.grey.shade900,
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   child: const Text(
                     'cancel',
-                    style: TextStyle(color: Colors.red),
                   ),
                 ),
                 MaterialButton(
-                  color: Colors.grey.shade900,
                   onPressed: () {
                     context.read<NoteDatabase>().addNote(textController.text);
                     textController.clear();
@@ -50,9 +49,7 @@ class _NotesPageState extends State<NotesPage> {
                   },
                   child: const Text(
                     'save',
-                    style: TextStyle(
-                      color: Colors.green,
-                    ),
+                    style: TextStyle(),
                   ),
                 ),
               ],
@@ -78,29 +75,23 @@ class _NotesPageState extends State<NotesPage> {
         ),
         actions: [
           MaterialButton(
-            color: Colors.grey.shade900,
             onPressed: () {
               Navigator.pop(context);
             },
             child: const Text(
               'cancel',
-              style: TextStyle(color: Colors.red),
             ),
           ),
           MaterialButton(
-            color: Colors.grey.shade900,
             onPressed: () {
               context
                   .read<NoteDatabase>()
                   .updateNote(note.id, textController.text);
-              textController.clear();
               Navigator.pop(context);
+              textController.clear();
             },
             child: const Text(
               'update',
-              style: TextStyle(
-                color: Colors.green,
-              ),
             ),
           ),
         ],
@@ -122,43 +113,70 @@ class _NotesPageState extends State<NotesPage> {
     List<Note> currentNotes = noteDatabase.currentNotes;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text(
-          'N O T E S',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
+      drawer: const MyDrawer(),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         shape: const CircleBorder(eccentricity: 1),
         onPressed: () => createNote(),
-        child: const Icon(
+        child: Icon(
           Icons.add,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.inversePrimary,
         ),
       ),
-      body: ListView.builder(
-        itemCount: currentNotes.length,
-        itemBuilder: (context, index) {
-          final note = currentNotes[index];
-          return ListTile(
-            title: Text(note.note),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    onPressed: () => updateNote(note),
-                    icon: const Icon(Icons.edit)),
-                IconButton(
-                    onPressed: () => deleteNote(note.id),
-                    icon: const Icon(Icons.delete)),
-              ],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Heading
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Text(
+              'Notes',
+              style: GoogleFonts.dmSerifText(
+                fontSize: 48,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
             ),
-          );
-        },
+          ),
+
+          // list of notes
+          Expanded(
+            child: ListView.builder(
+              itemCount: currentNotes.length,
+              itemBuilder: (context, index) {
+                final note = currentNotes[index];
+                return ListTile(
+                  title: Text(
+                    note.note,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                          onPressed: () => updateNote(note),
+                          icon: Icon(Icons.edit,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .inversePrimary)),
+                      IconButton(
+                          onPressed: () => deleteNote(note.id),
+                          icon: Icon(Icons.delete,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .inversePrimary)),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
